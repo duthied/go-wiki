@@ -31,18 +31,6 @@ func loadPage(title string) (*Page, error) {
 }
 // ------------------------- //
 
-// func renderTemplate(w http.ResponseWriter, tpl string, p *Page) {
-// 	t, err := template.ParseFiles("templates/" + tpl + ".html")
-//   if err != nil {
-//     http.Error(w, err.Error(), http.StatusInternalServerError)
-//     return
-//   }
-//   err = t.Execute(w, p)
-//   if err != nil {
-//     http.Error(w, err.Error(), http.StatusInternalServerError)
-//   }
-// }
-
 var templates = template.Must(template.ParseFiles("templates/edit.html", "templates/view.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
@@ -105,6 +93,5 @@ func main() {
   http.HandleFunc("/edit/", makeHandler(editHandler))
   http.HandleFunc("/save/", makeHandler(saveHandler))
 
-	// protect, er... um... listen and serve
-  http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", nil)
 }
