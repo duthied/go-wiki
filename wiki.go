@@ -1,8 +1,8 @@
 package main
 
 import (
-	"html/template"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -10,23 +10,23 @@ import (
 
 type Page struct {
 	Title string
-	Body []byte
+	Body  []byte
 }
 
 // write Page
 func (p *Page) save() error {
 	filename := "content/" + p.Title + ".txt"
-  return ioutil.WriteFile(filename, p.Body, 0600)
+	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
 // read Page
 func loadPage(title string) (*Page, error) {
 	filename := "content/" + title + ".txt"
-  body, err := ioutil.ReadFile(filename)
-  if err != nil {
-    return nil, err
-  }
-  return &Page{Title: title, Body: body}, nil
+	body, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
+	}
+	return &Page{Title: title, Body: body}, nil
 }
 
 var templates = template.Must(template.ParseFiles("templates/edit.html", "templates/view.html"))
@@ -41,7 +41,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
-	
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("handling request:", r.URL)
 
@@ -55,19 +55,19 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
-  body := r.FormValue("body")
-  p := &Page{Title: title, Body: []byte(body)}
-  err := p.save()
-  if err != nil {
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-    return
-  }
-  http.Redirect(w, r, "/view/"+title, http.StatusFound)
+	body := r.FormValue("body")
+	p := &Page{Title: title, Body: []byte(body)}
+	err := p.save()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := loadPage(title)
-  if err != nil {
+	if err != nil {
 		http.NotFound(w, r)
 		return
 	}
@@ -76,10 +76,10 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := loadPage(title)
-  if err != nil {
-    p = &Page{Title: title}
-  }
-  renderTemplate(w, "edit", p)
+	if err != nil {
+		p = &Page{Title: title}
+	}
+	renderTemplate(w, "edit", p)
 }
 
 func main() {
@@ -87,8 +87,8 @@ func main() {
 
 	// register handlers
 	http.HandleFunc("/view/", makeHandler(viewHandler))
-  http.HandleFunc("/edit/", makeHandler(editHandler))
-  http.HandleFunc("/save/", makeHandler(saveHandler))
+	http.HandleFunc("/edit/", makeHandler(editHandler))
+	http.HandleFunc("/save/", makeHandler(saveHandler))
 
 	http.ListenAndServe(":8080", nil)
 }
