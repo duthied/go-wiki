@@ -15,13 +15,13 @@ type Page struct {
 
 // write Page
 func (p *Page) save() error {
-	filename := "content/" + p.Title + ".txt"
+	filename := "data/" + p.Title + ".txt"
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
 // read Page
 func loadPage(title string) (*Page, error) {
-	filename := "content/" + title + ".txt"
+	filename := "data/" + title + ".txt"
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -29,7 +29,8 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil
 }
 
-var templates = template.Must(template.ParseFiles("templates/edit.html", "templates/view.html"))
+// load all the templates at initialization
+var templates = template.Must(template.ParseFiles("tmpl/edit.html", "tmpl/view.html", "tmpl/root.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)
@@ -82,6 +83,13 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 	renderTemplate(w, "edit", p)
 }
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("handling request:", r.URL)
+
+	p := &Page{Title: "Home", Body: []byte("This is the body")}
+	renderTemplate(w, "root", p)
+}
+
 func main() {
 	fmt.Println("Serving ...")
 
@@ -89,6 +97,8 @@ func main() {
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/", makeHandler(saveHandler))
+
+	http.HandleFunc("/", rootHandler)
 
 	http.ListenAndServe(":8080", nil)
 }
