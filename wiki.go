@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"strings"
 )
 
 type Page struct {
@@ -13,20 +14,52 @@ type Page struct {
 	Body  []byte
 }
 
+type RootPage struct {
+	Title string
+	Pages []*Page
+}
+
+const DataPath = "data/"
+
 // write Page
 func (p *Page) save() error {
-	filename := "data/" + p.Title + ".txt"
+	filename := DataPath + p.Title + ".txt"
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
 // read Page
 func loadPage(title string) (*Page, error) {
-	filename := "data/" + title + ".txt"
+	filename := DataPath + title + ".txt"
 	body, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 	return &Page{Title: title, Body: body}, nil
+}
+
+func formatTitle(t string) string {
+	i := strings.LastIndex(t, ".")
+	n := t[0:i]
+	return strings.ToLower(n)
+}
+
+func getPages() ([]*Page, error) {
+	dList, err := ioutil.ReadDir(DataPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var pages []*Page
+	for _, file := range dList {
+		title := formatTitle(file.Name())
+		page, err := loadPage(title)
+		if err != nil {
+			return nil, err
+		}
+		pages = append(pages, page)
+	}
+
+	return pages, nil
 }
 
 // load all the templates at initialization
@@ -83,11 +116,24 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 	renderTemplate(w, "edit", p)
 }
 
+func renderRootTemplate(w http.ResponseWriter, tmpl string, p *RootPage) {
+	err := templates.ExecuteTemplate(w, tmpl+".html", p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("handling request:", r.URL)
 
-	p := &Page{Title: "Home", Body: []byte("This is the body")}
-	renderTemplate(w, "root", p)
+	pages, err := getPages()
+	if err != nil {
+		http.Error(w, "Unable to read list", 500)
+		return
+	}
+
+	c := &RootPage{Title: "Home", Pages: pages}
+	renderRootTemplate(w, "root", c)
 }
 
 func main() {

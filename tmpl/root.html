@@ -1,3 +1,18 @@
 <h1>Home</h1>
 
-<div>{{printf "%s" .Body}}</div>
+<h2>Content Links:</h2>
+
+<div>
+    <ul>
+        {{range .Pages}}
+            <li>
+                <div>
+                    <a href="/view/{{.Title}}">{{.Title}}</a><br>
+                    <div>
+                        <code>{{printf "%s" .Body}}</code>
+                    </div>
+                </div>
+            </li>
+        {{end}}
+    </ul>
+</div>
