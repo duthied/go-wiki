@@ -3,11 +3,14 @@
 <h1>Editing {{.Title}}</h1>
 
 <form action="/save/{{.Title}}" method="POST">
-<div><textarea name="body" rows="20" cols="80">{{printf "%s" .Body}}</textarea></div>
-<div>
-    <button type="button" class="btn btn-outline-success btn-sm">Save</button>
-    <a href="/view/{{.Title}}"><button type="button" class="btn btn-outline-danger btn-sm">Cancel</button></a>
-</div>
+    <div class="form-group">
+        <label for="textareaBody">Body:</label>
+        <textarea class="form-control" id="textareaBody" name="body" rows="20" cols="80">{{printf "%s" .Body}}</textarea>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-success btn-sm">Save</button>
+        <a href="/view/{{.Title}}"><button type="button" class="btn btn-outline-danger btn-sm">Cancel</button></a>
+    </div>
 </form>
 
 {{ end }}
