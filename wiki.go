@@ -62,11 +62,10 @@ func getPages() ([]*Page, error) {
 	return pages, nil
 }
 
-// load all the templates at initialization
-var templates = template.Must(template.ParseFiles("tmpl/edit.html", "tmpl/view.html", "tmpl/root.html"))
+var templates = make(map[string]*template.Template)
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
-	err := templates.ExecuteTemplate(w, tmpl+".html", p)
+	err := templates[tmpl].ExecuteTemplate(w, "layout", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -117,7 +116,7 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 }
 
 func renderRootTemplate(w http.ResponseWriter, tmpl string, p *RootPage) {
-	err := templates.ExecuteTemplate(w, tmpl+".html", p)
+	err := templates[tmpl].ExecuteTemplate(w, "layout", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -137,6 +136,11 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	templates["root"] = template.Must(template.ParseFiles("tmpl/root.html", "tmpl/layout.html"))
+	templates["view"] = template.Must(template.ParseFiles("tmpl/view.html", "tmpl/layout.html"))
+	templates["edit"] = template.Must(template.ParseFiles("tmpl/edit.html", "tmpl/layout.html"))
+
 	fmt.Println("Serving ...")
 
 	// register handlers
