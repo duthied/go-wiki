@@ -4,11 +4,10 @@
 
 <form action="/save/{{.Title}}" method="POST">
 <div><textarea name="body" rows="20" cols="80">{{printf "%s" .Body}}</textarea></div>
-<div><input type="submit" value="Save"></div>
-
-<br><br>
-<div><a href="/view/{{.Title}}">cancel</a><br></div>
-
+<div>
+    <button type="button" class="btn btn-outline-success btn-sm">Save</button>
+    <a href="/view/{{.Title}}"><button type="button" class="btn btn-outline-danger btn-sm">Cancel</button></a>
+</div>
 </form>
 
 {{ end }}

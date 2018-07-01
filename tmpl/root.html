@@ -1,22 +1,25 @@
 {{ define "body" }}
 
-<h1>Home</h1>
+<div class="jumbotron">
+    <h1 class="display-4">Home</h1>
 
-<h2>Content Links:</h2>
+    <p class="lead">Content Links:</p>
 
-<div>
-    <ul>
-        {{range .Pages}}
-            <li>
-                <div>
-                    <a href="/view/{{.Title}}">{{.Title}}</a><br>
-                    <div>
-                        <code>{{printf "%s" .Body}}</code>
-                    </div>
-                </div>
-            </li>
-        {{end}}
-    </ul>
+    <div>
+        <ul class="list-group">
+            {{range .Pages}}
+                <a href="/view/{{.Title}}">
+                    <li class="list-group-item">
+                        <div>
+                            {{.Title}}<br>
+                            <div>
+                                <code>{{printf "%s" .Body}}</code>
+                            </div>
+                        </div>
+                    </li>
+                </a>
+            {{end}}
+        </ul>
+    </div>
 </div>
-
 {{ end }}

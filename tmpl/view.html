@@ -1,14 +1,16 @@
 {{ define "body" }}
 
-<h1>{{.Title}}</h1>
+<div class="jumbotron">
+    <h1 class="display-4">{{.Title}}</h1>
 
-<p>[<a href="/edit/{{.Title}}">edit</a>]</p>
+    <hr class="my-4">
+    <div>{{printf "%s" .Body}}</div>
 
-<div>{{printf "%s" .Body}}</div>
+    <a href="/edit/{{.Title}}"><button type="button" class="btn btn-outline-primary btn-sm">Edit</button></a>
 
-<br><br>
-<div>
-    <a href="/">back home</a>
+    <br>
+    <div>
+        <a href="/">back home</a>
+    </div>
 </div>
-
 {{ end }}
