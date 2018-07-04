@@ -37,7 +37,7 @@ func loadPage(filename string) (*Page, error) {
 
 	body, err := ioutil.ReadFile(DataPath + filename + ".txt")
 	if err != nil {
-		fmt.Println("error:", err)
+		// TODO: add context before returning
 		return nil, err
 	}
 
@@ -53,7 +53,7 @@ func formatTitle(t string) string {
 func getPages() ([]*Page, error) {
 	dList, err := ioutil.ReadDir(DataPath)
 	if err != nil {
-		fmt.Println("error:", err)
+		// TODO: add context before returning
 		return nil, err
 	}
 
@@ -62,7 +62,7 @@ func getPages() ([]*Page, error) {
 		filename := formatTitle(file.Name())
 		page, err := loadPage(filename)
 		if err != nil {
-			fmt.Println("error:", err)
+			// TODO: add context before returning
 			return nil, err
 		}
 		pages = append(pages, page)
@@ -74,7 +74,6 @@ func getPages() ([]*Page, error) {
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	err := templates[tmpl].ExecuteTemplate(w, "layout", p)
 	if err != nil {
-		fmt.Println("error:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -104,7 +103,6 @@ func saveHandler(w http.ResponseWriter, r *http.Request, filename string) {
 	p := &Page{Title: title, Filename: filename, Body: []byte(body)}
 	err := p.save()
 	if err != nil {
-		fmt.Println("error:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -114,7 +112,6 @@ func saveHandler(w http.ResponseWriter, r *http.Request, filename string) {
 func viewHandler(w http.ResponseWriter, r *http.Request, filename string) {
 	p, err := loadPage(filename)
 	if err != nil {
-		fmt.Println("error:", err)
 		http.NotFound(w, r)
 		return
 	}
@@ -134,7 +131,6 @@ func editHandler(w http.ResponseWriter, r *http.Request, filename string) {
 func newHandler(w http.ResponseWriter, r *http.Request) {
 	err := templates["new"].ExecuteTemplate(w, "layout", nil)
 	if err != nil {
-		fmt.Println("error:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -155,7 +151,6 @@ func createNewHandler(w http.ResponseWriter, r *http.Request) {
 	p := &Page{Title: title, Filename: filename, Body: []byte(body)}
 	err := p.save()
 	if err != nil {
-		fmt.Println("error:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -165,7 +160,6 @@ func createNewHandler(w http.ResponseWriter, r *http.Request) {
 func renderRootTemplate(w http.ResponseWriter, tmpl string, p *RootPage) {
 	err := templates[tmpl].ExecuteTemplate(w, "layout", p)
 	if err != nil {
-		fmt.Println("error:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -175,7 +169,6 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 	pages, err := getPages()
 	if err != nil {
-		fmt.Println("error:", err)
 		http.Error(w, "Unable to read list", 500)
 		return
 	}

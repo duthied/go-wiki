@@ -1,0 +1,22 @@
+{{ define "body" }}
+
+<h1>Create New Page</h1>
+
+<form action="/create/" method="POST">
+    <div class="form-group">
+        <label for="inputTitle">Title</label>
+        <input type="text" class="form-control" id="inputTitle" aria-describedby="titleHelp" name="title" placeholder="Enter title">
+        <small id="titleHelp" class="form-text text-muted">This is the title of the page</small>
+    </div>
+    <div class="form-group">
+        <label for="textareaBody">Body:</label>
+        <textarea class="form-control" id="textareaBody" aria-describedby="bodyHelp" name="body" rows="20" cols="80"></textarea>
+        <small id="bodyHelp" class="form-text text-muted">This is the body of the page</small>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-outline-success btn-sm">Create</button>
+        <a href="/"><button type="button" class="btn btn-outline-danger btn-sm">Cancel</button></a>
+    </div>
+</form>
+
+{{ end }}
